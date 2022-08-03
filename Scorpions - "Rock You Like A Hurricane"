@@ -7,25 +7,23 @@ live_loop :mainriff do
   with_fx :gverb, room: 55, release: 2, mix: 0.2 do
     with_fx :distortion, distort: 0.999, mix: 0.8, amp: 0.3 do
       tick
-      synth :fm, note: mel.look-0, release: 1
-      synth :fm, note: mel.look+7, release: 1
-      synth :fm, note: mel.look+12, release: 1
+      synth :fm, note: chord(mel.look-0,'5'), release: 1, depth: 3
       sleep t.look*0.5
     end
   end
 end
 
 live_loop :bass do
-  synth :fm, note: 64-24, release: 1, depth: 2, amp: 5
-  sample :bd_haus, cutoff: 90, amp: 5
-  sample :drum_tom_lo_hard
+  ##| synth :fm, note: 64-24, release: 1, depth: 2, amp: 5
+  ##| sample :bd_haus, cutoff: 90, amp: 5
+  ##| sample :drum_tom_lo_hard
   sleep 2
 end
 
 live_loop :highpart do
   with_fx :slicer, phase: 0.25, wave: 0, mix: 1 do
-    synth :dsaw, note: 64+12, sustain: 16, release: 0
-    synth :dsaw, note: 64+7+12, sustain: 16, release: 0
+    ##| synth :dsaw, note: 64+12, sustain: 16, release: 0
+    ##| synth :dsaw, note: 64+7+12, sustain: 16, release: 0
     sleep 16
   end
 end

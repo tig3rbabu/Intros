@@ -1,0 +1,43 @@
+use_bpm 220
+
+bass = ring(43,55,55,55,43,55,55,43,55,55,55,43,40,41,42)
+t = ring(3,2,2,1,4,2,2,3,2,2,1,2,2,2,2)
+
+mel = ring(62,62,65,62,62,65,62,62,65,62,59,60,61)
+t2 = ring(3,3,2,3,3,2,3,3,2,2,2,2,2)
+
+live_loop :bass do
+  with_fx :gverb, room: 58, release: 1, mix: 0.2 do
+    tick
+    synth :fm, note: bass.look, depth: 3
+    synth :dsaw, note: bass.look-12
+    sleep t.look*0.5
+  end
+end
+
+live_loop :ooweee do
+  with_fx :gverb, room: 58, release: 4, mix: 0.3 do
+    ooee = synth :dtri, note: 67+0.1, note_slide: 1, sustain: 2
+    sleep 1
+    control ooee, note: 67+12+0.1
+    sleep 15
+  end
+end
+
+live_loop :kickums do
+  sample :bd_haus, cutoff: 90, amp: 3
+  sleep 2
+end
+
+live_loop :hightpart do
+  with_fx :gverb, room: 58, release: 1, mix: 0.2 do
+    with_fx :slicer, phase: 0.5, wave: 0, mix: 1 do
+      queen = synth :dsaw, note: 62, sustain: 16, release: 0, amp: 0.8, detune: 0.3
+      13.times do
+        tick
+        control queen, note: mel.look
+        sleep t2.look*0.5
+      end
+    end
+  end
+end

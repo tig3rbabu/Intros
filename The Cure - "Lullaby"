@@ -1,0 +1,68 @@
+use_bpm 200
+
+bass1 = knit(59,2,57,1,58,1,59,2,59,2,57,1,58,1,59,2,54,2)
+bass2 = knit(55,2,54,2,55,2,55,2,54,2,55,2,57,2)
+tb = ring(1,5,1,1,1,7,1,5,1,1,1,3,1,3)
+
+mel = ring(59,57,59,59,57,59,57,59,59,62,62,64,64,66,59,62,64,64,66,59,59,57)
+tm = ring(3,1,1,1,1,4,1,1,1,1,1,1,1,1,4,1,1,1,1,2,1,2)
+
+pluckums = ring(59,59,61,59,62,59,62,61,59)
+tp = ring(1,1,2,1,2,1,2,2,4)
+
+live_loop :basss do
+  tick(:i)
+  bass = ring(bass1,bass2).look(:i)
+  bass.length.times do
+    tick(:ii)
+    synth :fm, note: bass.look(:ii)-12, release: 0.5, amp: 2.2, depth: 2.5
+    sleep tb.look(:ii)*0.5
+  end
+end
+
+live_loop :guitar do
+  with_fx :echo, phase: 1, decay: 1, mix: 0.3 do
+    tick
+    synth :dsaw, note: mel.look
+    sleep tm.look
+  end
+end
+
+live_loop :string do
+  tick
+  synth :supersaw, note: ring(69,66,64,nil).look, sustain: 8, amp: 0.4
+  sleep 8
+end
+
+live_loop :ppluckender do
+  sleep 17
+  with_fx :gverb, room: 69, release: 1.5, mix: 0.3 do
+    2.times do
+      tick(:ii)
+      pluckums.length.times do
+        tick(:i)
+        synth :pluck, note: pluckums.look(:i)+12, amp: 1.3
+        synth :pluck, note: pluckums.look(:i)+24, amp: 1.8
+        sleep ring(1,1,2,1,2,1,2,2,ring(4,2).look(:ii)).look(:i)*0.5
+      end
+    end
+  end
+end
+
+live_loop :chordy do
+  with_fx :gverb, room: 69, release: 1.5, mix: 0.3 do
+    2.times do
+      tick
+      4.times do
+        sleep 2
+        with_fx :wobble, phase: 2, cutoff_max: 90, cutoff_min: 50, wave: 0, mix: 1 do
+          synth :dsaw, note: chord(ring(59,55).look+12,'5', invert: ring(0,0).look), sustain: 1, release: 0, cutoff: 95, amp: 0.5
+          sleep 2
+        end
+      end
+    end
+  end
+end
+
+
+

@@ -1,0 +1,26 @@
+use_bpm 100
+
+ch1 = ring(61,65,70)
+ch2 = ring(60,65,70)
+ch3 = ring(60,65,68)
+
+live_loop :drepiano do
+  tick(:i)
+  tt = ring(8,3,5).look(:i)
+  ch = ring(ch1,ch2,ch3).look(:i)
+  tt.times do
+    3.times do
+      tick(:ii)
+      synth :piano, note: ch.look(:ii)+12
+      sleep 0.05
+    end
+    sleep 0.5-0.15
+  end
+end
+
+live_loop :bass do
+  tick
+  synth :dsaw, note: ring(70,72,65,65).look-24, cutoff: 60
+  synth :fm, note: ring(70,72,65,65).look-24, cutoff: 60
+  sleep ring(6,2).look*0.5
+end

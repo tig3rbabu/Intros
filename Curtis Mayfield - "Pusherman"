@@ -1,0 +1,56 @@
+use_bpm 122
+
+
+bass = ring(65,63,60,58,60,53)
+tb = [5,4,2,2,1,2]
+bass2 = ring(65,48,50,51,53,53)
+tb2 = [5,3,2,2,1,3]
+
+
+mel = ring(63,65,68,63,65,68,63,65,68,63,65,65)
+tmel = [1,1,2]
+
+puts tb2.sum
+
+##| 2.times do
+##|   tick
+##|   ##| synth :fm, note: 53-12
+##|   ##| sleep ring(1,2).look*0.5
+##| end
+
+live_loop :mel do
+  tick
+  if look==0
+    sleep 15.5
+  else
+    sleep 0
+  end
+  with_fx :slicer, phase: 0.25, wave: 0, mix: 1 do
+    with_fx :wobble, phase: 1, cutoff_max: 90, cutoff_min: 40, wave: 0, mix: 1, amp: 1 do
+      synth :pluck, note: mel.look+12
+      sleep tmel.ring.look*0.5
+    end
+  end
+end
+
+live_loop :bass do
+  tb.length.times do
+    tick
+    synth :fm, note: bass2.look-12
+    sleep tb2.ring.look*0.5
+  end
+end
+
+live_loop :snare do
+  sample :drum_snare_hard, finish: 0.25, amp: 0.5
+  sleep 1
+end
+
+live_loop :guitar do
+  with_fx :wobble, phase: 4, cutoff_max: 90, cutoff_min: 40, wave: 0, mix: 1, amp: 0.5 do
+    tick
+    synth :dsaw, note: ring(74,72).look, release: 4
+    synth :dsaw, note: 65, release: 4
+    sleep 8
+  end
+end

@@ -1,0 +1,73 @@
+use_bpm 100
+
+bass = ring(67,69)
+tbeat = [2,4,1,2,1,5,1]
+riff = [2,3,3,3,3,4,3,3,2,4,2]
+
+##| puts riff.count
+
+live_loop :tonw do
+  tick
+  with_fx :gverb, room: 69, release: 2, mix: 0.2 do
+    with_fx :flanger, mix: 1 do
+      with_fx :wobble, phase: 0.75, cutoff_max: 90, cutoff_min: 40, wave: 0, mix: 1, amp: 1 do
+        synth :prophet, note: knit(nil,1,67,7,69,3).look-12-1, release: 0.5
+        synth :pluck, note: knit(nil,1,67,7,69,3).look-12-1, release: 0.5, amp: 1.5
+        sleep riff.ring.look*0.25
+      end
+    end
+  end
+end
+
+live_loop :bass do
+  tick
+  with_fx :gverb, room: 69, release: 2, mix: 0.4 do
+    synth :fm, note: ring(67,69).look-24-1, sustain: 0.5, release: 0, depth: 2, cutoff: 75
+    sleep ring(0.5,3.5).look
+  end
+end
+
+with_fx :gverb, room: 69, release: 1, mix: 0.28 do
+  live_loop :bveat do
+    tick
+    sample :bd_haus, cutoff: 90, amp: 3
+    sleep tbeat.ring.look*0.25
+  end
+  
+  live_loop :backbeat do
+    sleep 1
+    sample :drum_snare_hard, rate: 1.2, finish: 0.5
+    sleep 1
+  end
+  
+  live_loop :hhat do
+    4.times do
+      sample :drum_cymbal_pedal, rate: 2.9
+      sleep 0.25
+      sample :drum_cymbal_closed, rate: 3.8
+      sleep 0.25
+    end
+  end
+  
+  live_loop :whitenoise do
+    sleep 6*0.25
+    sample :elec_cymbal, sustain: 0.25, release: 0, finish: 0.45, amp: 0.8, rate: 0.9
+    sleep 10*0.25
+  end
+end
+
+live_loop :pwon do
+  with_fx :gverb, room: 69, release: 4, mix: 0.4 do
+    sleep 22*0.25
+    with_fx :wobble, phase: 5, cutoff_max: 90, cutoff_min: 40, wave: 0, mix: 1 do
+      with_fx :slicer, phase: 0.75, wave: 0, mix: 1 do
+        cc = synth :dsaw, note: 66, note_slide: 3, sustain: 3
+        4.times do
+          tick
+          control cc, note: ring(66,66,66,68).look
+          sleep ring(3,3,2,2).look*0.25
+        end
+      end
+    end
+  end
+end

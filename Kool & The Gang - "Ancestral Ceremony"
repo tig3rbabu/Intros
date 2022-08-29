@@ -1,0 +1,62 @@
+use_bpm 112
+
+bass = ring(52,59,66,64,64,52,59,69,67,64,52,59,66,64,62,64,67,66,64,66,64,66,55,55,52)
+tb = [1,1,1,3,2,1,1,1,3,2,1,1,1,3,1,1,0.5,0.5,0.5,1.5,0.5,0.5,1,1,2]
+
+yah1 = ring(64,67,71,69,71,67,69,67,64)
+yah2 = ring(71,74,70,69,71,67,69,67,64)
+ty = [2,2,1,3,1,1,1,1,18]
+
+vox1 = ring(71,74,70,69,69,64,67)
+vox2 = ring(71,74,70,69,69,67,67,64,76)
+tv1 = [2,2,1,1,4,1,21]
+tv2 = [2,2,1,1,2,1,1,1,21]
+
+puts tv2.sum
+
+live_loop :meoldy do
+  tick(:i)
+  if look(:i)==0
+    sleep 14+16
+  else
+    sleep 0
+  end
+  mel = ring(vox1,vox2).look(:i)
+  tv = ring(tv1,tv2).look(:i)
+  ##| mm = synth :dsaw, sustain: tv.sum*0.5, release: 0
+  tick_reset(:ii)
+  tv.length.times do
+    tick(:ii)
+    synth :dsaw, note: mel.look(:ii)
+    sleep tv.ring.look(:ii)*0.5
+  end
+end
+
+live_loop :bass do
+  with_fx :slicer, phase: 2, wave: 0, mix: 0 do
+    bb =  synth :fm, note: 52, sustain: tb.sum*0.5, release: 0
+    tb.length.times do
+      tick
+      control bb, note: bass.look-12
+      sleep tb.ring.look*0.5
+    end
+  end
+end
+
+live_loop :yaas do
+  sleep 1
+  tick(:i)
+  yah = ring(yah1,yah2).look(:i)
+  yh = synth :dtri, sustain: ty.sum*0.5-8, release: 2
+  tick_reset(:ii)
+  ty.length.times do
+    tick(:ii)
+    control yh, note: yah.look(:ii)+12
+    sleep ty.ring.look(:ii)*0.5
+  end
+end
+
+live_loop :beat do
+  sample :bd_haus, cutoff: 90
+  sleep 1
+end

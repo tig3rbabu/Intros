@@ -1,0 +1,52 @@
+use_bpm 170
+
+mel = ring(65,65,63,60)
+tt = [2,1.5,0.5,2,2,1.5,0.5,6]
+sd = [2,1.5,0.5,1,2,1.5,0.5,1]
+
+puts tt.sum
+
+live_loop :bass do
+  tick
+  synth :fm, note: ring(60,72).look-24
+  sample :bd_haus, cutoff: 90, amp: 2
+  sleep 1
+end
+
+live_loop :backbeat do
+  sleep 1
+  sample :drum_snare_hard, rate: 0.8, finish: 0.2
+  with_fx :gverb, room: 69, release: 2, mix: 0.2 do
+    with_fx :lpf, cutoff: 90, mix: 0.8 do
+      with_fx :distortion, distort: 0.999, mix: 1, amp: 0.3 do
+        tt.length.times do
+          tick
+          ##| synth :prophet, note: chord(60,'5')-12, depth: 7, sustain: sd.ring.look*0.5, release: 0
+          ##| synth :prophet, note: mel.look-12, depth: 7, sustain: sd.ring.look*0.5, release: 0
+        end
+      end
+    end
+  end
+  sleep 1
+end
+
+live_loop :riff do
+  if look==0
+    sleep 1
+  else
+    sleep 0
+  end
+  with_fx :gverb, room: 69, release: 2, mix: 0.2 do
+    with_fx :lpf, cutoff: 90, mix: 0.8 do
+      with_fx :distortion, distort: 0.999, mix: 1, amp: 0.3 do
+        tt.length.times do
+          tick
+          synth :prophet, note: chord(60,'5')-12, depth: 7, sustain: sd.ring.look*0.5, release: 0
+          synth :prophet, note: mel.look-12, depth: 7, sustain: sd.ring.look*0.5, release: 0
+          sleep tt.ring.look*0.5
+        end
+      end
+    end
+  end
+end
+

@@ -1,0 +1,85 @@
+use_bpm 100
+
+mel1 = ring(53,55,58,60,62,60,58,62,60,58,56,63,63,63,65,62,60,58,58)
+mel2 = ring(61.5,62,64.5,65,63,63,63,65,61.5,58,61.5,58,61.5,62)
+tm1 = [1,1,1,1,1,1,2,1,1,1,3,1,1,3,1,1,1,2,4]
+tm2 = [2,6,2,6,1,1,3,1,1,1,1,1,1,3]
+bendy1 = ring(0)
+bendy2 = ring(1,1,1,1,0,0,0,0,0,0,0,0,1)
+
+puts mel1.length
+
+a = 0
+
+live_loop :melody do
+  mel = [mel1,mel2][a]
+  tt = [tm1,tm2][a]
+  del = [2,1][a]
+  bendy = [bendy1,bendy2][a]
+  sleep del
+  with_fx :gverb, room: 69, release: 2, mix: 0.1 do
+    with_fx :slicer, phase: 0.5, wave: 0, mix: 1-a do
+      gg = synth :dsaw, note: mel.look+0, note_slide: 1, sustain: (tt.sum*0.5)-6, release: 10, cutoff: 95
+      tick_reset
+      tt.length.times do
+        tick
+        control gg, note: mel.look+0, note_slide: bendy.look
+        sleep tt.ring.look*0.5
+      end
+    end
+  end
+end
+
+live_loop :flutey do
+  with_fx :level, amp: a do
+    sleep 2.75
+    tick_reset
+    5.times do
+      tick
+      synth :dtri, note: ring(65,65,65,62,65).look+12
+      sleep ring(0.5,0.25,0.5,0.5,0).look
+    end
+    sleep 2.25
+    tick_reset
+    5.times do
+      tick
+      synth :dtri, note: ring(65,65,65,63,65).look+12
+      sleep ring(0.5,0.25,0.5,0.5,0).look
+    end
+    sleep 7.5
+  end
+end
+
+live_loop :bass do
+  tick
+  synth :fm, note: ring(58,56).look-12, release: 8
+  sleep 8
+end
+
+live_loop :guitar do
+  if look==0
+    sleep 15.5
+  else
+    sleep 0
+  end
+  with_fx :gverb, room: 69, release: 6, mix: 0.3 do
+    3.times do
+      tick
+      synth :pluck, note: ring(53,56,58).look-12
+      sleep ring(0.5,0.75,14.75).look
+    end
+  end
+end
+
+with_fx :gverb, room: 69, release: 2, mix: 0.2 do
+  live_loop :beat do
+    sample :bd_haus, cutoff: 90, amp: 2
+    sleep ring(2,0.75,0.75,0.5).tick
+  end
+  
+  live_loop :backbeat do
+    sleep 1
+    sample :drum_snare_hard
+    sleep 1
+  end
+end

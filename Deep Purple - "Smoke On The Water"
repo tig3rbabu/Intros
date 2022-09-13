@@ -1,0 +1,46 @@
+use_bpm 111
+
+riff = ring(55,58,60,55,58,61,60,55,58,60,58,55)
+tr = [2,2,3,2,2,1,4,2,2,3,3,6]
+
+bass = ring(55,60,58,55,53,54)
+tb = [20,3,3,3,2,1]
+
+puts tb.sum
+
+live_loop :bass do
+  with_fx :slicer, phase: 0.5, wave: 0, mix: 1 do
+    tick
+    synth :fm, note: bass.look-12, sustain: tb.ring.look*0.5, amp: 3, depth: 3
+    ##| synth :dsaw, note: bass.look-24, sustain: tb.ring.look*0.5, amp: 2
+    sleep tb.ring.look*0.5
+  end
+end
+
+live_loop :riffy do
+  with_fx :distortion, distort: 0.8, mix: 1 do
+    with_fx :gverb, room: 69, release: 2, mix: 0.2, amp: 0.5 do
+      tr.length.times do
+        tick
+        synth :dsaw, note: chord(riff.look-12, '5'), sustain: (tr.ring.look*0.5)-0.25, release: 0, cutoff: 90
+        sleep tr.ring.look*0.5
+      end
+    end
+  end
+end
+
+with_fx :gverb, room: 69, release: 2, mix: 0.2 do
+  live_loop :hhats do
+    16.times do
+      sample :drum_cymbal_closed, rate: rrand(1,1.5)
+      sleep 0.25
+    end
+  end
+  
+  live_loop :snary do
+    sleep 1
+    sample :drum_snare_hard
+    sleep 1
+  end
+end
+

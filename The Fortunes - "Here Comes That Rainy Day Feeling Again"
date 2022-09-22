@@ -1,0 +1,62 @@
+use_bpm 120
+
+
+bass1 = ring(60,60,57,55)
+bass2 = ring(58)
+tb2 = [4,2,1,2,1,2,2,2]
+
+mel1 = ring(60,60,64,67,69,67,64,62,60,58,57,58,60,60,58,57,58)
+mel2 = ring(60,59,60,62,62,60,55,57,60,60,58)
+tm1 = [5,1,1,2,2,2,1,1,1,4,2,1,2,1,2,2,2]
+tm2 = [1,2,2,2,1,2,1,1,1,1,18]
+
+puts tm2.sum
+
+
+live_loop :melody do
+  tick
+  synth :sine, note: mel1.look+12
+  synth :dsaw, note: mel1.look+0, sustain: tm1.ring.look*0.5
+  sleep tm1.ring.look*0.5
+end
+
+live_loop :melody2 do
+  tick
+  if look==0
+    sleep 1
+  else
+    sleep 0
+  end
+  synth :dtri, note: mel2.look+12, release: 1.5, amp: 2
+  sleep tm2.ring.look*0.5
+end
+
+
+live_loop :bass do
+  16.times do
+    tick
+    synth :fm, note: bass1.look-12
+    sleep 0.5
+  end
+  with_fx :slicer, phase: 0.5, wave: 0, mix: 0 do
+    tb2.length.times do
+      tick
+      synth :fm, note: bass2.look-12, sustain: (tb2.ring.look*0.5)-0.5, release: 0
+      sleep tb2.ring.look*0.5
+    end
+  end
+end
+
+live_loop :best do
+  with_fx :gverb, room: 69, release: 1.5, mix: 0.2, amp: 2 do
+    2.times do
+      sample :bd_haus, cutoff: 90
+      sleep 0.5
+    end
+    sample :drum_snare_hard, rate: 0.7, finish: 0.25
+    sleep 0.5
+    sample :bd_haus, cutoff: 90
+    sleep 0.5
+  end
+end
+

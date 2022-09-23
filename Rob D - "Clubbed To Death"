@@ -1,0 +1,80 @@
+use_bpm 103
+
+mel1 = ring(58,57,55,58,57,55,60)
+tm1 = [7.5,0.25,0.25,3.5,0.25,0.25,4]
+
+live_loop :histring do
+  with_fx :gverb, room: 69, release: 4, mix: 0.6, amp: 0.6 do
+    dd = synth :supersaw, note: 58+12, sustain: 15
+    tick_reset
+    tm1.length.times do
+      tick
+      control dd, note: mel1.look+12
+      sleep tm1.ring.look
+    end
+  end
+end
+
+
+live_loop :bass do
+  f = 4
+  tick
+  synth :dsaw, note: ring(55,57,58,60).look-36, sustain: f, cutoff: 70
+  synth :dsaw, note: ring(55,57,58,60).look-24, sustain: f, cutoff: 70
+  sleep f
+end
+
+live_loop :drone do
+  synth :dsaw, note: 55-0, sustain: 16, cutoff: 80
+  sleep 16
+end
+
+live_loop :thana do
+  with_fx :gverb, room: 69, release: 4, mix: 0.6, amp: 0.7 do
+    tick(:ii)
+    4.times do
+      tick(:i)
+      synth :dsaw, note: ring(58,57,56,55).look(:i)+12, sustain: 0.125, release: 0
+      sleep 0.125
+    end
+    sleep 1.25
+    2.times do
+      tick(:k)
+      2.times do
+        tick(:z)
+        synth :dsaw, note: 62+24, release: 1
+        sleep ring(0.25,1).look(:z)
+      end
+      a = synth :dsaw, note: 57+24, note_slide: 0.5, release: 1
+      sleep 0.25
+      control a, note: 55+24
+      sleep ring(2.5,0.25).look(:k)
+    end
+    synth :dsaw, note: 58+12, sustain: 0.125, release: 0, amp: ring(1,0).look(:ii)
+    sleep 0.5
+  end
+end
+
+
+with_fx :gverb, room: 69, release: 1.5, mix: 0.15 do
+  live_loop :beat do
+    tick
+    sample :drum_bass_hard, cutoff: 100, rate: 0.66
+    sample :drum_tom_lo_hard, rate: 0.6, cutoff: 110
+    sleep ring(1,4,0.666,3-0.666).look*0.5
+  end
+  
+  
+  live_loop :backbeat do
+    sleep 1
+    sample :sn_dub, rate: 0.666
+    sleep 1
+  end
+  
+  live_loop :tickas do
+    16.times do
+      sample :drum_cymbal_closed, rate: 0.666, cutoff: 120
+      sleep 0.5
+    end
+  end
+end

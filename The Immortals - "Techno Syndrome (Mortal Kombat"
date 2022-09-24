@@ -1,0 +1,69 @@
+use_bpm 140
+
+ch1 = ring(57,57,60,57,62,57,64,62)
+ch2 = ring(60,60,64,60,67,60,64,60)
+ch3 = ring(55,55,59,55,60,55,62,60)
+ch4 = ring(53,53,57,53,60,53,60,59)
+
+mel1 = ring(57,57,57,57,55,60,57,57,57,57,55,52,57,57,57,57,55,60,57,57,57,57,57,57,57)
+tm1 = [0.75,0.75,0.75,0.75,0.5,0.5,0.75,0.75,0.75,0.75,0.5,0.5,0.75,0.75,0.75,0.75,0.5,0.5,0.75,0.75,0.5,0.25,0.5,0.25,1]
+
+
+puts tm1.sum
+
+live_loop :melody do
+  with_fx :gverb, room: 69, release: 1, mix: 0.15 do
+    tick
+    synth :dsaw, note: octs(mel1.look+12,2), sustain: 0.25, release: 0.15, amp: 1
+    synth :supersaw, note: octs(mel1.look+12,2), sustain: 0.25, release: 0.15, amp: 1.2
+    sleep tm1.ring.look
+  end
+end
+
+
+live_loop :bass1 do
+  with_fx :wobble, phase: 6, cutoff_max: 100, cutoff_min: 60, mix: 1 do
+    with_fx :slicer, phase: 0.25, cutoff_max: 95, cutoff_min: 50, mix: 1 do
+      tick
+      synth :dsaw, note: ring(57,55).look-12, sustain: ring(6,2).look*0.5, release: 0
+      synth :dsaw, note: ring(57,55).look-24, sustain: ring(6,2).look*0.5, release: 0
+      sleep ring(6,2).look*0.5
+    end
+  end
+end
+
+live_loop :chordy do
+  tick(:i)
+  ch = ring(ch1,ch2,ch3,ch4).look(:i)
+  with_fx :echo, phase: 0.75, decay: 3, mix: 0.3 do
+    ch.length.times do
+      tick(:ii)
+      synth :dsaw, note: ch.look(:ii), release: 0.5, amp: 1.5
+      sleep 0.5
+    end
+  end
+end
+
+live_loop :beat do
+  ##| sample :bd_haus, amp: 6
+  sleep 1
+end
+
+live_loop :snare do
+  sleep 1
+  ##| sample :sn_dub, amp: 2
+  sleep 1
+end
+
+live_loop :dub do
+  sleep 0.5
+  ##| sample :drum_cymbal_closed, amp: 4
+  sleep 0.5
+end
+
+live_loop :dub2 do
+  16.times do
+    ##| sample :drum_cymbal_closed, amp: 3, rate: 4
+    sleep 0.25
+  end
+end

@@ -1,0 +1,85 @@
+use_bpm 125
+
+
+bass = ring(58,61,61,56,58,56)
+tb = [10,1,2,3,15,1]
+
+string1 = ring(60,61,63,60,58)
+
+horn1 = ring(53,56,58,58,58,61,63,63,65,68,70,70)
+horn2 = ring(58,61,63,61,58,58,61,63,64,63,65,68,70,70)
+horn3 = ring(70,68,70,68,65,68,65,63,65,63,61,63,61,58,61,58,56,58,65,68,70,70)
+th1 = [2,1,2,11,2,1,2,11,2,1,2,11+12]
+th2 = [2,1,2,3,8,2,1,2,3,8,2,1,2,11+16+4]
+th3 = [1,1,2,1,1,2,1,1,2,1,1,2,1,1,2,1,1,10,2,1,2,3+96-8]
+
+live_loop :horny do
+  tick(:i)
+  if look(:i)==0
+    sleep 15.5+16
+  else
+    sleep 0
+  end
+  horn = [horn1,horn2,horn3].ring.look(:i)
+  tt = [th1,th2,th3].ring.look(:i)
+  tick_reset(:ii)
+  with_fx :echo, phase: 0.75, decay: 6, mix: 0.8 do
+    tt.length.times do
+      tick(:ii)
+      synth :dsaw, note: horn.look(:ii)+12
+      sleep tt.ring.look(:ii)*0.25
+    end
+  end
+end
+
+live_loop :wahwah do
+  with_fx :wobble, phase: 0.85, cutoff_max: 90, cutoff_min: 50, wave: 2, mix: 1, amp: 0.8 do
+    with_fx :slicer, phase: ring(0.5,0.25).tick, wave: 1, mix: 1 do
+      2.times do
+        synth :zawa, note: chord(58-0,'5'), sustain: 0.5, release: 0
+        sleep 0.5
+      end
+    end
+  end
+end
+
+live_loop :strings do
+  sleep 2
+  tick(:i)
+  h = ring(0,5).look(:i)
+  strings = [string1][0]
+  with_fx :gverb, room: 69, release: 2, mix: 0.6, amp: 0.6 do
+    with_fx :slicer, phase: 0.125, wave: 3, mix: 0.8 do
+      str = synth :dsaw, note: string1[0]+24-h, attack: 4, release: 12
+      str2 = synth :dsaw, note: string1[0]+7+12-h, attack: 4, release: 12
+      strings.length.times do
+        tick(:ii)
+        control str, note: strings.look(:ii)+24-h
+        control str2, note: strings.look(:ii)+7+12-h
+        sleep 2
+      end
+    end
+  end
+  sleep 4
+end
+
+live_loop :bass do
+  tick
+  synth :fm, note: bass.look-12, depth: 2.5
+  sleep tb.ring.look*0.5
+end
+
+live_loop :hhats do
+  sample :drum_cymbal_closed
+  sleep 0.5
+  sample :drum_cymbal_closed, start: 0.35
+  sleep 0.5
+end
+
+live_loop :claps do
+  sleep 0.5
+  ##| sample :perc_snap
+  ##| sleep 0.06
+  ##| sample :perc_snap2
+  sleep 0.5
+end

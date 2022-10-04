@@ -26,18 +26,20 @@ live_loop :horny do
   with_fx :echo, phase: 0.75, decay: 6, mix: 0.8 do
     tt.length.times do
       tick(:ii)
-      synth :dsaw, note: horn.look(:ii)+12
+      ##| synth :dsaw, note: horn.look(:ii)+12
       sleep tt.ring.look(:ii)*0.25
     end
   end
 end
 
 live_loop :wahwah do
-  with_fx :wobble, phase: 0.85, cutoff_max: 90, cutoff_min: 50, wave: 2, mix: 1, amp: 0.8 do
-    with_fx :slicer, phase: ring(0.5,0.25).tick, wave: 1, mix: 1 do
-      2.times do
-        synth :zawa, note: chord(58-0,'5'), sustain: 0.5, release: 0
-        sleep 0.5
+  with_fx :distortion, distort: 0.7, mix: 0.6 do
+    with_fx :wobble, phase: 0.85, cutoff_max: 90, cutoff_min: 50, wave: 2, mix: 1, amp: 0.8 do
+      with_fx :slicer, phase: ring(0.5,0.25).tick, wave: 1, mix: 1 do
+        2.times do
+          synth :fm, note: chord(58-0,'5'), sustain: 0.5, release: 0, depth: 15
+          sleep 0.5
+        end
       end
     end
   end
@@ -78,8 +80,6 @@ end
 
 live_loop :claps do
   sleep 0.5
-  ##| sample :perc_snap
-  ##| sleep 0.06
-  ##| sample :perc_snap2
+  sample :elec_snare, rate: 2.5
   sleep 0.5
 end

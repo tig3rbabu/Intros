@@ -1,0 +1,46 @@
+use_bpm 110
+
+bass = ring(63,70,64,71)
+
+live_loop :flutey do
+  tick(:i)
+  if look(:i)==0
+    sleep 16
+  else
+    sleep 0
+  end
+  with_fx :echo, phase: 0.75, decay: 6, mix: 0.9 do
+    8.times do
+      tick(:ii)
+      synth :dtri, note: ring(61,63,56,58,51,52,58,59).look(:ii)+24
+      sleep ring(0.1675,4-0.1675).look(:ii)
+    end
+  end
+end
+
+live_loop :chords do
+  ff = 4
+  tick
+  synth :fm, note: bass.look-24, release: 2, depth: 2
+  synth :dsaw, note: chord(bass.look-12,knit('m7',2,:major7,2).look, invert: 4), attack: ff-(ff/2), sustain: ff/2, release: 0.5
+  synth :dsaw, note: chord(bass.look-0,knit('m7',2,:major7,2).look, invert: -4), attack: ff-(ff/2), sustain: ff/2, release: 0.5
+  sleep ff
+end
+
+live_loop :kick do
+  sample :bd_fat, amp: 5
+  sleep ring(3,3,4,6).tick*0.25
+end
+
+live_loop :backbeat do
+  sleep 1
+  sample :sn_generic, rate: 1.5, amp: 2, finish: 0.33
+  sleep 1
+end
+
+live_loop :hhat do
+  sample :drum_cymbal_closed, rate: 1.5
+  sleep 0.25
+  sample :drum_cymbal_closed, start: 0.2, rate: 1.2
+  sleep 0.25
+end

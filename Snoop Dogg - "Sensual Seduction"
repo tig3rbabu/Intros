@@ -13,7 +13,7 @@ live_loop :flutey do
     8.times do
       tick(:ii)
       synth :dtri, note: ring(61,63,56,58,51,52,58,59).look(:ii)+24
-      sleep ring(0.1675,4-0.1675).look(:ii)
+      sleep ring(0.25,4-0.25).look(:ii)
     end
   end
 end

@@ -1,0 +1,72 @@
+use_bpm 115
+
+mel1 = ring(69,69,67,65,65,69,72,74,69,67,65,69,69,69,69,72,69,67,65,65,67,69)
+mel2 = ring(65,65,67,69,67,67,65,67.2,67,65,69,60)
+tm1 = [1,2,1,1,11,1,2,1,1,1,10,1,1,1,2,2,2,2,1,2,1,1,2+8]
+tm2 = [2,2,2,7,1,1,1,1,1,2,2,10+6]
+
+puts tm2.sum
+
+live_loop :melody do
+  tick(:i)
+  if look(:i)==0
+    sleep 1
+  else
+    sleep 0
+  end
+  mel = [mel1,mel2].ring.look(:i)
+  tt = [tm1,tm2].ring.look(:i)
+  tick_reset(:ii)
+  with_fx :echo, phase: 0.75, decay: 6, mix: 0.7 do
+    tt.length.times do
+      tick(:ii)
+      synth :dsaw, note: mel.look(:ii), amp: 1.5
+      sleep tt.ring.look(:ii)*0.5
+    end
+  end
+end
+
+
+live_loop :organ1 do
+  with_fx :gverb, room: 69, release: 2, mix: 0.2, amp: 0.8 do
+    h = 0.5
+    with_fx :slicer, phase: h/2, wave: 0, mix: 1 do
+      tick
+      synth :organ_tonewheel, note: ring(65,72,77,72).look, sustain: h, release: 0, amp: 4
+      ##| synth :organ_tonewheel, note: ring(65,72,77,72).look+12, sustain: h, release: 0, amp: 2
+      sleep h
+    end
+  end
+end
+
+live_loop :pianokesh do
+  with_fx :gverb, room: 69, release: 2, mix: 0.2, amp: 0.8 do
+    tick
+    synth :piano, note: chord(ring(65,60,58).look-12,:major), release: 6, hard: 0.8, vel: 0.4
+    synth :piano, note: ring(65,60,58).look-24, release: 6, hard: 0.8, vel: 0.4, amp: 0.5
+    synth :fm, note: ring(65,60,58).look-24, release: 2, depth: 3, amp: 2
+    with_fx :distortion, distort: 0.8, mix: 0.9, amp: 0.8 do
+      ##| synth :dsaw, note: chord(ring(65,60,58).look-0,'5'), release: 6, amp: 0.8
+    end
+    sleep ring(6,2,8).look*0.5
+  end
+end
+
+org1 = ring(72,74,76,77)
+org2 = ring(70,74,72,nil)
+org3 = ring(77,nil,72,nil)
+
+live_loop :organ2 do
+  org = [org1,org2,org3][2]
+  tick
+  if look==0
+    sleep 0.5
+  else
+    sleep 0
+  end
+  h = 0.5
+  with_fx :slicer, phase: h/4, wave: 0, mix: 1 do
+    synth :organ_tonewheel, note: org.look, sustain: h-knit(0,3,0.25,1).look, release: 0, amp: 3
+    sleep h
+  end
+end

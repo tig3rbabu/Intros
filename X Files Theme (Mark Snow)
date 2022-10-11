@@ -1,0 +1,78 @@
+use_bpm 180
+
+mel1 = ring(69,76,74,76,79,76)
+mel2 = ring(69,76,74,76,81,76)
+mel3 = ring(84,83,81,79,81,76)
+mel4 = ring(nil,nil,nil,nil,81,76)
+tt = [1,1,1,1,1,7]
+
+live_loop :melody do
+  tick(:i)
+  if look(:i)==0
+    sleep 12-1.5
+  else
+    sleep 0
+  end
+  mel = [mel1,mel2,mel3,mel3,mel4].ring.look(:i)
+  g = 12
+  with_fx :gverb, room: 69, release: 2, mix: 0.6 do
+    xfiles = synth :beep, note: mel[0]+g, note_slide: 0.25, attack: 2, sustain: tt.sum-3, release: 6, amp: 0.2, cutoff: 70
+    tt.length.times do
+      tick(:ii)
+      control xfiles, note: mel.look(:ii)+g
+      sleep tt.ring.look(:ii)*1.5
+    end
+  end
+end
+
+
+live_loop :hauntingpianpo do
+  with_fx :gverb, room: 69, release: 2, mix: 0.2 do
+    tick_reset(:i)
+    3.times do
+      tick(:i)
+      synth :dtri, note: ring(69,72,76).look(:i)-12, release: 0.5, hard: 0.6, amp: 0.6
+      synth :piano, note: ring(69,72,76).look(:i)-0, release: 2, hard: 0.6
+      sleep 0.5
+    end
+    tick_reset(:i)
+    with_fx :echo, phase: 1.5, decay: 12, mix: 0.9 do
+      3.times do
+        tick(:i)
+        synth :dtri, note: ring(77,77,76).look(:i)-12, release: 0.5, hard: 0.6, amp: 0.6
+        synth :piano, note: ring(77,77,76).look(:i)-0, release: 2, hard: 0.6
+        sleep 0.5
+      end
+    end
+    sleep 3
+    with_fx :echo, phase: 1.5, decay: 12, mix: 0.9 do
+      tick(:ii)
+      synth :piano, note: ring(81,83).look(:ii), release: 2, hard: 0.6, amp: 1.5
+      ##| synth :dtri, note: ring(81,83).look(:ii)-12, release: 2, hard: 0.6, amp: 0.6
+    end
+    sleep 6
+  end
+end
+
+live_loop :clickty do
+  with_fx :gverb, room: 69, release: 2, mix: 0.1 do
+    with_fx :echo, phase: 0.5, decay: 6, mix: 0.9 do
+      synth :pluck, note: 81-48, amp: 2, release: 0.25
+      sleep 6
+    end
+  end
+end
+
+live_loop :booom do
+  with_fx :gverb, room: 69, release: 8, mix: 0.6 do
+    sample :bd_haus, cutoff: 90, amp: 1.5
+    sample :elec_cymbal, cutoff: 90, start: 1, finish: 0.25, amp: 2, rate: 0.6
+    sleep 12*4
+  end
+end
+
+
+live_loop :drone do
+  synth :dsaw, note: chord(69-24,'5'), sustain: 8, cutoff: 75
+  sleep 8
+end

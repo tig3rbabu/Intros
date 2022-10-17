@@ -1,0 +1,53 @@
+use_bpm 110
+
+mainriff = ring(69,72,69,74,76,74,69,67,69,64,67)
+tm1 = [6,2,3,0.5,0.5,4,8,3,1,2,2]
+
+live_loop :bass do
+  tick(:i)
+  bass = ring(57,57,60,62,57,57,60,62)
+  synth :dsaw, note: bass.look(:i)-36, sustain: 2, release: 0, cutoff: 60, amp: 2
+  8.times do
+    if spread(3,8).tick(:ii)
+      synth :fm, note: bass.look(:i)-24, depth: 3
+      synth :fm, note: bass.look(:i)-12, depth: 2
+    end
+    sleep 0.25
+  end
+end
+
+bass2 = ring(nil,60,59,57,60,60,62,62,nil,60,59,57,52,52,55,55)
+tb2 = [2,3,3,10,4,4,4,2]
+
+puts tb2.sum
+
+live_loop :bass2 do
+  with_fx :slicer, phase: 0.25, wave: 0, mix: 1 do
+    tick
+    synth :fm, note: bass2.look-0, depth: 2, sustain: 0.5, release: 0
+    sleep tb2.ring.look*0.25
+  end
+end
+
+live_loop :riff do
+  p = 12
+  syn = :dpulse
+  with_fx :echo, phase: 1,decay: 8, mix: 0.8 do
+    3.times do
+      tick
+      synth syn, note: mainriff.look+p, release: 1.5
+      sleep tm1.ring.look*0.5
+    end
+    rr = synth syn, note: mainriff.look+p, note_slide: 0.1, sustain: 1.5, release: 0.5
+    3.times do
+      tick
+      control rr, note: mainriff.look+p
+      sleep tm1.ring.look*0.5
+    end
+    5.times do
+      tick
+      synth syn, note: mainriff.look+p, release: 1.5
+      sleep tm1.ring.look*0.5
+    end
+  end
+end

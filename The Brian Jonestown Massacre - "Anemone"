@@ -24,7 +24,7 @@ live_loop :guitra, delay: 5 do
       with_fx :distortion, distort: 0.8, mix: 0.8 do
         tg.length.times do
           tick(:ii)
-          synth :dsaw, note: git.look(:ii), release: 1.5, amp: 0.3, cutoff: 90
+          synth :dsaw, note: git.look(:ii)-0, release: 1.5, amp: 0.3, cutoff: 90
           sleep tg.ring.look(:ii)*0.25
         end
       end
@@ -39,21 +39,25 @@ cht = [5,3]
 live_loop :chords, delay: 4 do
   tick(:i)
   cc = ch.look(:i)
-  4.times do
-    tick(:ii)
-    synth :zawa, note: chord(cc, chn.look(:ii)), release: cht.ring.look(:ii)*0.5, amp: 2
-    sleep cht.ring.look(:ii)*0.5
+  with_fx :slicer, phase: 0.5, wave: 2, mix: 0.9 do
+    4.times do
+      tick(:ii)
+      synth :beep, note: chord(cc+12, chn.look(:ii)), release: cht.ring.look(:ii)*0.5, amp: 2.5
+      sleep cht.ring.look(:ii)*0.5
+    end
   end
 end
 
 
 live_loop :bass, delay: 2.5 do
-  with_fx :gverb, room: 69, release: 2, mix: 0.25, amp: 1 do
+  with_fx :gverb, room: 69, release: 2, mix: 0.25, amp: 1.2 do
     with_fx :flanger, mix: 1 do
+      dd = synth :dsaw, note: bass2[0]-36, note_slide: 0.25, sustain: tb.sum*0.25
       tb.length.times do
         tick
-        synth :fm, note: bass2.look-24, release: 0.5, depth: 3
-        synth :fm, note: bass1.look-12, release: 0.5, depth: 2
+        control dd, note: bass2.look-36
+        ##| synth :fm, note: bass2.look-24, release: 0.5, depth: 3
+        ##| synth :fm, note: bass1.look-12, release: 0.5, depth: 2
         sleep tb.ring.look*0.25
       end
     end
@@ -80,13 +84,16 @@ dd = 1
 live_loop :beat do
   with_fx :flanger, mix: 1 do
     with_fx :level, amp: 5*dd do
+      hh = 3
       8.times do
-        sample :bd_haus, cutoff: 90 if spread(3,8).tick
+        sample :bd_haus, cutoff: 90 if spread(hh,8).tick
         sleep 0.25
       end
-      sleep 1
+      sleep 0.5
       sample :bd_haus, cutoff: 90
-      sleep 1
+      sleep 0.25
+      ##| sample :bd_haus, cutoff: 90
+      sleep 1.25
     end
   end
 end

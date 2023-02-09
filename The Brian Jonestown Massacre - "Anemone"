@@ -1,0 +1,103 @@
+use_bpm 85
+
+bass1 = ring(60,62,63,65,63,63,63,65,56,56,56,58,56,56,56,58)
+bass2 = ring(60,62,63,65,63,63,63,65,68,68,68,70,68,68,68,70)
+tb = [1,1,4,10,2,2,2,10,2,2,2,10,2,2,2,10]
+
+git1 = ring(70,68,63,64,65,65,70.5,70,68,72,75,72,77,77,77,77,58,56,53,56,58)
+git2 = ring(70,68,65,65,63,65,63,64,65,65,70.5,70,68,72,75,72,77,77,77,77,80,79,80,79,79,79,79,80)
+tg1 = [2,14,1,1,2,2,2,2,2,2,2,2,4,2,2,6,2,4,2,2,6]
+tg2 = [2,4,2,2,2,4,1,1,2,2,2,2,2,2,2,2,4,2,2,2,2,1,2,1,4,2,2,6]
+
+puts git2.length
+puts tg2.length
+puts tg2.sum
+
+live_loop :guitra, delay: 5 do
+  ##| tick_reset(:i)
+  tick(:i)
+  git = [git1,git2].ring.look(:i)
+  tg = [tg1,tg2].ring.look(:i)
+  tick_reset(:ii)
+  with_fx :gverb, room: 69, release: 2, mix: 0.25 do
+    with_fx :flanger, mix: 0 do
+      with_fx :distortion, distort: 0.8, mix: 0.8 do
+        tg.length.times do
+          tick(:ii)
+          synth :dsaw, note: git.look(:ii), release: 1.5, amp: 0.3, cutoff: 90
+          sleep tg.ring.look(:ii)*0.25
+        end
+      end
+    end
+  end
+end
+
+ch = ring(65,58)
+chn = ring('5','7')
+cht = [5,3]
+
+live_loop :chords, delay: 4 do
+  tick(:i)
+  cc = ch.look(:i)
+  4.times do
+    tick(:ii)
+    synth :zawa, note: chord(cc, chn.look(:ii)), release: cht.ring.look(:ii)*0.5, amp: 2
+    sleep cht.ring.look(:ii)*0.5
+  end
+end
+
+
+live_loop :bass, delay: 2.5 do
+  with_fx :gverb, room: 69, release: 2, mix: 0.25, amp: 1 do
+    with_fx :flanger, mix: 1 do
+      tb.length.times do
+        tick
+        synth :fm, note: bass2.look-24, release: 0.5, depth: 3
+        synth :fm, note: bass1.look-12, release: 0.5, depth: 2
+        sleep tb.ring.look*0.25
+      end
+    end
+  end
+end
+
+live_loop :drone do
+  synth :organ_tonewheel, note: chord(65+12, '5'), sustain: 16, release: 0
+  synth :organ_tonewheel, note: chord(65, '5'), sustain: 16, release: 0
+  sleep 16
+end
+
+live_loop :tambourine do
+  with_fx :gverb, room: 69, release: 2, mix: 0.25, amp: 1 do
+    sample :drum_cymbal_closed
+    sleep 0.25
+    sample :drum_cymbal_closed, start: 0.25
+    sleep 0.25
+  end
+end
+
+dd = 1
+
+live_loop :beat do
+  with_fx :flanger, mix: 1 do
+    with_fx :level, amp: 5*dd do
+      8.times do
+        sample :bd_haus, cutoff: 90 if spread(3,8).tick
+        sleep 0.25
+      end
+      sleep 1
+      sample :bd_haus, cutoff: 90
+      sleep 1
+    end
+  end
+end
+
+live_loop :snarr do
+  with_fx :gverb, room: 69, release: 2, mix: 0.25, amp: 1*dd do
+    with_fx :flanger, mix: 1 do
+      sleep 1
+      synth :cnoise, release: 0.75
+      sample :elec_snare, finish: 0.75
+      sleep 1
+    end
+  end
+end

@@ -89,7 +89,8 @@ end
 
 live_loop :kdn do
   sleep 1
-  sample :sn_dub, amp: 1.7
+  synth :cnoise, release: 0.25, amp: 1.7
+  synth :gnoise, release: 0.25, amp: 1.7
   sleep 1
 end
 

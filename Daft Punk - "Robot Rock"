@@ -1,0 +1,109 @@
+use_bpm 110
+
+mell = ring(62,62,60,57,53,50)
+tml = [1,1,2,2,2,24]
+
+live_loop :meldy, delay: 6 do
+  with_fx :bitcrusher, sample_rate: 3000, mix: 1 do
+    with_fx :flanger, mix: 1 do
+      with_fx :wobble, phase: 0.25, mix: 1 do
+        ##| tick_reset(:ii)
+        tml.length.times do
+          tick(:ii)
+          synth :dsaw, note: mell.look(:ii)-12, release: 0.25, amp: 5
+          sleep tml.ring.look(:ii)*0.25
+        end
+      end
+    end
+  end
+end
+
+live_loop :bass do
+  with_fx :gverb, room: 69, release: 2, mix: 0.2 do
+    with_fx :distortion, distort: 0.999, mix: 1, amp: 0.75 do
+      with_fx :flanger, mix: 1 do
+        tick
+        synth :fm, note: 62-24, sustain: 0.5, release: 0, depth: 2
+        synth :dsaw, note: 62-24, sustain: 0.5, release: 0
+        synth :dsaw, note: chord(62-0,'5'), sustain: 0.5, release: 0
+        
+      end
+    end
+  end
+  synth :fm, note: 62-12, sustain: 0.5, release: 0, depth: 2
+  sleep ring(5,1.5,1.5,8).look*0.5
+end
+
+mel1 = ring(64,60,57,53,52)
+mel2 = ring(64,60,57,53,50,48)
+tm1 = [1,1,1,1,4]
+tm2 = [1,1,1,2,1,2]
+
+live_loop :meldoy do
+  sleep 1
+  tick(:i)
+  mel = [mel1,mel2].ring.look(:i)
+  tm = [tm1,tm2].ring.look(:i)
+  with_fx :flanger, mix: 1 do
+    with_fx :wobble, phase: 4, mix: 1 do
+      dp = synth :dpulse, note: mel[0]+0, note_slide: 0.1, sustain: (tm.sum*0.25)+1, release: 0, depth: 20
+      dpp = synth :dtri, note: mel[0]+12, note_slide: 0.1, sustain: (tm.sum*0.25)+1, release: 0, detune: 0.2
+      dppp = synth :fm, note: mel[0]+24, note_slide: 0.1, sustain: (tm.sum*0.25)+1, release: 0, depth: 20
+      tick_reset(:ii)
+      tm.length.times do
+        tick(:ii)
+        control dp, note: mel.look(:ii)+0
+        control dpp, note: mel.look(:ii)+12
+        control dppp, note: mel.look(:ii)+24
+        synth :prophet, note: mel.look(:ii)+12, depth: 20, release: 0.5
+        sleep tm.ring.look(:ii)*0.25
+      end
+    end
+  end
+  sleep 1
+end
+
+live_loop :kick do
+  tick
+  sample :bd_haus, amp: 5
+  sleep ring(1.75,0.25,2).look
+end
+
+live_loop :snare do
+  tick_reset
+  7.times do
+    tick
+    sleep 0.5
+    synth :cnoise, sustain: 0.5, release: 0, res: 0.7, cutoff: 120, amp: ring(0,0,0,1).look
+    sleep 0.5
+    sample :drum_snare_hard, finish: 0.1, rate: 0.8, amp: 3
+    sleep 1
+  end
+  tick_reset
+  2.times do
+    tick
+    sample :drum_snare_hard, finish: 0.1, rate: 0.8, amp: 3
+    sleep ring(1.25,0.75).look
+  end
+end
+
+live_loop :hhat do
+  synth :cnoise, release: 1
+  sample :elec_cymbal, rate: 0.4
+  sleep 3.5
+  2.times do
+    sample :drum_cymbal_closed, amp: 2.5
+    sleep 0.25
+  end
+end
+
+live_loop :hhat2 do
+  sleep 1.25
+  with_fx :slicer, phase: 1, wave: 0, invert_wave: 1, mix: 0.8 do
+    3.times do
+      sample :drum_cymbal_closed, amp: 2.5
+      sleep 0.25
+    end
+  end
+  sleep 0.5
+end

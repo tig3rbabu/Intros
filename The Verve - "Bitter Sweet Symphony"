@@ -1,0 +1,41 @@
+use_bpm 90
+
+mel1 = ring(68,69,71,68,69,66,69,74,69,74,73,69,73)
+tm1 = [1,1,2,2,2,2,4,2,2,4,2,2,6]
+tm1s = [1,1,2,2,2,2,4,2,2,4,2,2,4]
+
+puts tm1.sum
+
+live_loop :melody, delay: 0.5 do
+  with_fx :gverb, room: 69, release: 4, mix: 0.5 do
+    tm1.length.times do
+      tick
+      synth :dsaw, note: mel1.look+12,  attack: 0.05, sustain: tm1s.ring.look*0.25-0.125, release: 0.1, detune: 0.2, amp: 1
+      sleep tm1.ring.look*0.25
+    end
+  end
+end
+
+bass1 = ring(64,59,62,57)
+har1 = ring(68,69)
+th1 = [4,12]
+
+live_loop :bass do
+  with_fx :flanger, mix: 1 do
+    with_fx :wobble, phase: 2, cutoff_max: 90, cutoff_min: 40, wave: 0, invert_wave: 1, mix: 1 do
+      tick
+      synth :saw, note: bass1.look-36, sustain: 2, release: 0
+      synth :dsaw, note: bass1.look-24, sustain: 2, release: 0
+      synth :fm, note: bass1.look-24, sustain: 2, release: 0, depth: 2
+      sleep 2
+    end
+  end
+end
+
+live_loop :harm do
+  with_fx :slicer, phase: 0.25, wave: 0, mix: 0.75 do
+    tick
+    synth :dsaw, note: har1.look-0, sustain: th1.ring.look*0.5, release: 0
+    sleep th1.ring.look*0.5
+  end
+end
